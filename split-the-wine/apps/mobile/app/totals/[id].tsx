@@ -177,9 +177,9 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: colors.line,
   },
-  chipOn: { backgroundColor: colors.primarySoft, borderColor: colors.accent },
+  chipOn: { backgroundColor: colors.primarySoft, borderColor: colors.primary },
   chipText: { color: colors.inkDim, fontFamily: "NunitoSans_600SemiBold" },
-  chipTextOn: { color: colors.warn, fontFamily: "NunitoSans_800ExtraBold" },
+  chipTextOn: { color: colors.primaryDeep, fontFamily: "NunitoSans_800ExtraBold" },
   input: {
     minHeight: 48,
     borderRadius: 14,

@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
   editRow: { flexDirection: "row", gap: 8 },
   narrow: { width: 56 },
   price: { width: 88 },
-  link: { color: colors.warn, fontFamily: "NunitoSans_800ExtraBold", marginVertical: 6 },
+  link: { color: colors.primaryDeep, fontFamily: "NunitoSans_800ExtraBold", marginVertical: 6 },
   muted: { color: colors.inkDim, fontFamily: "NunitoSans_400Regular", marginTop: 8 },
   money: { color: colors.ink, fontFamily: "NunitoSans_800ExtraBold" },
   btnPrimary: {
