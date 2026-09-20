@@ -548,6 +548,11 @@ function renderTotals() {
     <section class="hero" style="padding-top:4px">
       <h2 class="brand" style="font-size:2.1rem">Who owes what</h2>
       <p class="lede">Fees split by each person's share of the claimed subtotal — never evenly by headcount.</p>
+      ${
+        state.receipt.items.some((i) => i.remaining > 0)
+          ? `<p class="banner">Based on claims so far. Unclaimed items aren't assigned yet, so early claimants temporarily carry all fees until others claim.</p>`
+          : ""
+      }
     </section>
     <div class="field">
       <label>Payment method</label>

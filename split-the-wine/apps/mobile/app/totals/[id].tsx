@@ -58,6 +58,12 @@ export default function WhoOwesWhat() {
         Fees split by each person’s share of the claimed subtotal — never evenly
         by headcount.
       </Text>
+      {receipt?.items.some((i) => i.remaining > 0) ? (
+        <Text style={styles.banner}>
+          Based on claims so far. Unclaimed items aren’t assigned yet, so early
+          claimants temporarily carry all fees until others claim.
+        </Text>
+      ) : null}
 
       <Text style={styles.label}>Payment method</Text>
       <View style={styles.methods}>
@@ -145,6 +151,16 @@ const styles = StyleSheet.create({
   container: { padding: 24, gap: 10, paddingBottom: 48 },
   title: { fontFamily: "Fraunces_700Bold", fontSize: 32, color: colors.ink },
   sub: { fontFamily: "DMSans_400Regular", color: colors.inkDim, marginBottom: 8 },
+  banner: {
+    backgroundColor: "rgba(201,162,39,0.1)",
+    borderColor: "rgba(201,162,39,0.25)",
+    borderWidth: 1,
+    borderRadius: 14,
+    padding: 12,
+    color: colors.gold,
+    fontFamily: "DMSans_500Medium",
+    marginBottom: 4,
+  },
   label: {
     fontSize: 12,
     letterSpacing: 1,
