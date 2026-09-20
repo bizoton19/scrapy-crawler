@@ -265,8 +265,10 @@ async function submitClaim() {
     state.ownerTokens[result.claim.id] = result.ownerToken;
     saveTokens();
     state.receipt = result.receipt;
+    const claimedName = state.selectedItem.name;
+    const claimedQty = state.claimQty;
     closeSheet();
-    toast(`Claimed ${state.claimQty}× ${state.selectedItem.name}`);
+    toast(`Claimed ${claimedQty}× ${claimedName}`);
     render();
   } catch (e) {
     if (e.data?.error === "not_enough_remaining") {
@@ -756,13 +758,20 @@ function bind() {
   });
   document.getElementById("save-host")?.addEventListener("click", saveHostInfo);
   document.querySelectorAll("[data-pay]").forEach((btn) => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", async () => {
       const person = state.totals[Number(btn.dataset.pay)];
       const msg = paymentMessage(person);
-      const sms = `sms:?&body=${encodeURIComponent(msg)}`;
-      window.open(sms, "_blank");
-      navigator.clipboard?.writeText(msg);
-      toast("Message copied — SMS draft opened if available");
+      try {
+        await navigator.clipboard.writeText(msg);
+        toast("Payment request copied — paste into Messages / WhatsApp");
+      } catch {
+        toast(msg);
+      }
+      // Native SMS draft on phones only; skip desktop sms: blank tabs
+      const mobile = /iPhone|Android|Mobile/i.test(navigator.userAgent);
+      if (mobile) {
+        window.location.href = `sms:?&body=${encodeURIComponent(msg)}`;
+      }
     });
   });
   document.getElementById("btn-finalize")?.addEventListener("click", async () => {
