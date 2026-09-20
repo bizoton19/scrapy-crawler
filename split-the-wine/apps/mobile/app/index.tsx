@@ -31,29 +31,29 @@ export default function HostHome() {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.brand}>Split{"\n"}the Wine</Text>
       <Text style={styles.lede}>
-        We'll walk you through the check — claim what you ordered, then see
-        exactly what you owe.
+        Split a restaurant check — or an Airbnb night, hotel room, or anything
+        else — then let everyone claim their share.
       </Text>
 
       <Pressable
         style={({ pressed }) => [styles.btnPrimary, pressed && styles.pressed]}
-        onPress={() => router.push("/capture?demo=1")}
+        onPress={() => router.push("/create")}
       >
-        <Text style={styles.btnPrimaryText}>✓  Start with a demo receipt</Text>
+        <Text style={styles.btnPrimaryText}>✓  Create a custom split</Text>
       </Pressable>
 
       <Pressable
         style={({ pressed }) => [styles.btnSecondary, pressed && styles.pressed]}
         onPress={() => router.push("/capture")}
       >
-        <Text style={styles.btnSecondaryText}>Take or upload a photo</Text>
+        <Text style={styles.btnSecondaryText}>Photograph a receipt</Text>
       </Pressable>
 
       <Pressable
         style={({ pressed }) => [styles.btnGhost, pressed && styles.pressed]}
-        onPress={() => router.push("/review?manual=1")}
+        onPress={() => router.push("/capture?demo=1")}
       >
-        <Text style={styles.btnGhostText}>Enter items myself</Text>
+        <Text style={styles.btnGhostText}>Try the demo bar tab</Text>
       </Pressable>
 
       <Text style={styles.section}>Recent</Text>

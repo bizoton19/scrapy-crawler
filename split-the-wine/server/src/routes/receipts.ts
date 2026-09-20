@@ -138,6 +138,52 @@ receiptsRouter.post("/receipts/:id/parse", async (req, res) => {
   }
 });
 
+receiptsRouter.put("/receipts/:id/draft", (req, res) => {
+  const existing = loadReceipt(req.params.id);
+  if (!existing) {
+    res.status(404).json({ error: "not_found" });
+    return;
+  }
+  if (existing.status !== "draft") {
+    res.status(400).json({ error: "already_published" });
+    return;
+  }
+  const { restaurant, items, fees } = req.body ?? {};
+  if (!Array.isArray(items)) {
+    res.status(400).json({ error: "items_required" });
+    return;
+  }
+  const normalizedItems = items.map(
+    (it: { name: string; qty: number; totalCents?: number; total?: number }) => ({
+      name: String(it.name ?? "").trim() || "Item",
+      qty: Math.max(1, Math.round(Number(it.qty) || 1)),
+      total:
+        typeof it.totalCents === "number"
+          ? it.totalCents / 100
+          : Number(it.total) || 0,
+    })
+  );
+  const normalizedFees = Array.isArray(fees)
+    ? fees.map(
+        (f: { name: string; amountCents?: number; amount?: number }) => ({
+          name: String(f.name ?? "").trim() || "Fee",
+          amount:
+            typeof f.amountCents === "number"
+              ? f.amountCents / 100
+              : Number(f.amount) || 0,
+        })
+      )
+    : [];
+
+  replaceDraftItems(
+    req.params.id,
+    String(restaurant ?? ""),
+    normalizedItems,
+    normalizedFees
+  );
+  res.json({ receipt: loadReceipt(req.params.id) });
+});
+
 receiptsRouter.put("/receipts/:id", (req, res) => {
   const existing = loadReceipt(req.params.id);
   if (!existing) {

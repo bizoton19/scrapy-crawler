@@ -16,24 +16,30 @@ type DraftFee = { name: string; amountCents: number };
 
 export default function ReviewItems() {
   const router = useRouter();
-  const { id, manual } = useLocalSearchParams<{ id?: string; manual?: string }>();
+  const { id, manual, custom } = useLocalSearchParams<{
+    id?: string;
+    manual?: string;
+    custom?: string;
+  }>();
   const [receiptId, setReceiptId] = useState(id);
   const [restaurant, setRestaurant] = useState("");
   const [items, setItems] = useState<DraftItem[]>([]);
   const [fees, setFees] = useState<DraftFee[]>([]);
   const [banner, setBanner] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const isCustom = custom === "1" || manual === "1";
 
   useEffect(() => {
     (async () => {
-      if (manual === "1") {
+      if (manual === "1" && !id) {
         const created = await api<{ receiptId: string; receipt: PublicReceipt }>(
           "/receipts",
           { method: "POST", body: "{}" }
         );
         setReceiptId(created.receiptId);
         setItems([{ name: "", qty: 1, totalCents: 0 }]);
-        setFees([{ name: "Tax", amountCents: 0 }]);
+        setFees([]);
+        setBanner("Add rooms, shares, or anything people should claim.");
         return;
       }
       if (!id) return;
@@ -53,10 +59,12 @@ export default function ReviewItems() {
         }))
       );
       setBanner(
-        "Review carefully — vision is good but not perfect. Fix before sharing."
+        custom === "1"
+          ? "Edit freely, then create the claim link. Qty = how many spots can be claimed."
+          : "Review carefully — vision is good but not perfect. Fix before sharing."
       );
     })();
-  }, [id, manual]);
+  }, [id, manual, custom]);
 
   const subtotal = items.reduce((s, i) => s + i.totalCents, 0);
   const feeTotal = fees.reduce((s, f) => s + f.amountCents, 0);
@@ -86,11 +94,15 @@ export default function ReviewItems() {
 
   return (
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-      <Text style={styles.title}>Review items</Text>
-      <Text style={styles.sub}>Fix misreads before anyone claims.</Text>
+      <Text style={styles.title}>{isCustom ? "Review your split" : "Review items"}</Text>
+      <Text style={styles.sub}>
+        {isCustom
+          ? "Guests will claim units from this list."
+          : "Fix misreads before anyone claims."}
+      </Text>
       {banner ? <Text style={styles.banner}>{banner}</Text> : null}
 
-      <Text style={styles.label}>Restaurant</Text>
+      <Text style={styles.label}>{isCustom ? "Title" : "Restaurant"}</Text>
       <TextInput
         style={styles.input}
         value={restaurant}

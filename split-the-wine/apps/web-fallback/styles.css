@@ -595,3 +595,47 @@ body {
   font-weight: 800;
   margin-right: 8px;
 }
+
+.mode-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.mode-card {
+  text-align: left;
+  appearance: none;
+  border: 2px solid var(--line);
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 14px 16px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--font-body);
+  color: var(--ink);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mode-card strong {
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.mode-card span {
+  color: var(--ink-dim);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.mode-card.active {
+  border-color: var(--green);
+  background: var(--green-soft);
+  box-shadow: 0 0 0 3px rgba(0, 163, 65, 0.12);
+}
+
+.btn-primary .tt-check {
+  background: rgba(255, 255, 255, 0.22);
+}

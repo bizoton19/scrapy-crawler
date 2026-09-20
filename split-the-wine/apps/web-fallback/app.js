@@ -5,6 +5,18 @@ const state = {
   receipt: null,
   draft: null,
   parseSource: null,
+  custom: {
+    mode: "tiers", // equal | tiers | blank
+    title: "Airbnb weekend",
+    totalDollars: "800",
+    people: "4",
+    tiers: [
+      { name: "Master bedroom", qty: 1, amount: "350" },
+      { name: "Guest room", qty: 1, amount: "250" },
+      { name: "Couch", qty: 2, amount: "100" },
+    ],
+    cleaningFee: "0",
+  },
   selectedItem: null,
   claimQty: 1,
   guestName: localStorage.getItem("stw_name") || "",
@@ -349,13 +361,13 @@ function renderHome() {
   return `
     <section class="hero">
       <h1 class="brand">Split<br/>the Wine</h1>
-      <p class="lede">We'll walk you through the check — claim what you ordered, then see exactly what you owe.</p>
+      <p class="lede">Split a restaurant check — or an Airbnb night, hotel room, or anything else — then let everyone claim their share.</p>
     </section>
     <div class="stack">
-      <button class="btn btn-primary" id="btn-demo"><span class="tt-check">✓</span> Start with a demo receipt</button>
-      <label class="btn btn-secondary" for="file-input">Take or upload a photo</label>
+      <button class="btn btn-primary" id="btn-custom"><span class="tt-check">✓</span> Create a custom split</button>
+      <label class="btn btn-secondary" for="file-input">Photograph a receipt</label>
       <input id="file-input" type="file" accept="image/*" capture="environment" hidden />
-      <button class="btn btn-ghost" id="btn-manual">Enter items myself</button>
+      <button class="btn btn-ghost" id="btn-demo">Try the demo bar tab</button>
     </div>
     <p class="section-label">Recent</p>
     <div class="stack" style="margin-top:0">
@@ -366,15 +378,117 @@ function renderHome() {
                 (r) => `
         <button class="receipt-row" data-open="${r.id}">
           <div class="item-main">
-            <p class="item-name">${r.restaurant || "Untitled tab"}</p>
+            <p class="item-name">${r.restaurant || "Untitled split"}</p>
             <p class="item-meta">${r.status} · ${r.items.length} items</p>
           </div>
           <span class="badge">${r.items.reduce((s, i) => s + i.remaining, 0)}</span>
         </button>`
               )
               .join("")
-          : `<p class="muted">No open receipts yet.</p>`
+          : `<p class="muted">No open splits yet.</p>`
       }
+    </div>
+  `;
+}
+
+function renderCreate() {
+  const c = state.custom;
+  const equalPreview = (() => {
+    const total = Number(c.totalDollars) || 0;
+    const n = Math.max(1, Math.round(Number(c.people) || 1));
+    const each = total / n;
+    return { n, each, total };
+  })();
+  const tiersSum = c.tiers.reduce(
+    (s, t) => s + (Number(t.amount) || 0) * Math.max(1, Math.round(Number(t.qty) || 1)),
+    0
+  );
+  const cleaning = Number(c.cleaningFee) || 0;
+
+  return `
+    <div class="top-nav">
+      <button class="btn btn-ghost" id="btn-back-home">← Home</button>
+    </div>
+    <section class="hero" style="padding-top:4px">
+      <h2 class="brand" style="font-size:2rem">Create a custom split</h2>
+      <p class="lede">No photo needed — perfect for Airbnb, hotels, cabins, or group trips.</p>
+    </section>
+
+    <div class="field">
+      <label>What are you splitting?</label>
+      <input id="custom-title" value="${escapeAttr(c.title)}" placeholder="Airbnb · Downtown loft" />
+    </div>
+
+    <p class="section-label">How should people claim?</p>
+    <div class="mode-grid">
+      <button type="button" class="mode-card ${c.mode === "equal" ? "active" : ""}" data-mode="equal">
+        <strong>Equal shares</strong>
+        <span>$800 ÷ 4 people = $200 each</span>
+      </button>
+      <button type="button" class="mode-card ${c.mode === "tiers" ? "active" : ""}" data-mode="tiers">
+        <strong>Different rates</strong>
+        <span>Master bed vs couch, etc.</span>
+      </button>
+      <button type="button" class="mode-card ${c.mode === "blank" ? "active" : ""}" data-mode="blank">
+        <strong>Blank list</strong>
+        <span>Add your own line items</span>
+      </button>
+    </div>
+
+    ${
+      c.mode === "equal"
+        ? `
+      <div class="field">
+        <label>Total amount</label>
+        <input id="custom-total" type="number" inputmode="decimal" step="0.01" min="0" value="${escapeAttr(c.totalDollars)}" />
+      </div>
+      <div class="field">
+        <label>Number of people / shares</label>
+        <input id="custom-people" type="number" inputmode="numeric" min="1" step="1" value="${escapeAttr(c.people)}" />
+      </div>
+      <p class="banner">${equalPreview.n} shares × ${money(Math.round(equalPreview.each * 100))} = ${money(Math.round(equalPreview.total * 100))}</p>
+    `
+        : ""
+    }
+
+    ${
+      c.mode === "tiers"
+        ? `
+      <p class="section-label">Room / rate types</p>
+      <p class="tiny" style="margin-top:-6px;margin-bottom:10px">Qty = how many of that spot can be claimed. Amount = price <em>per</em> spot.</p>
+      <div id="tier-edits">
+        ${c.tiers
+          .map(
+            (t, idx) => `
+          <div class="edit-row" style="grid-template-columns:1fr 56px 88px 40px" data-tier="${idx}">
+            <input class="edit-input tname" value="${escapeAttr(t.name)}" placeholder="Master bedroom" />
+            <input class="edit-input tqty" type="number" min="1" step="1" value="${t.qty}" title="Quantity" />
+            <input class="edit-input tamount" type="number" step="0.01" value="${escapeAttr(t.amount)}" title="Price each" />
+            <button class="icon-btn" data-del-tier="${idx}" aria-label="Remove">×</button>
+          </div>`
+          )
+          .join("")}
+      </div>
+      <button class="btn btn-secondary" id="add-tier">+ Add rate</button>
+      <p class="item-meta" style="margin-top:12px">Rooms/rates total <span class="money">${money(Math.round(tiersSum * 100))}</span></p>
+    `
+        : ""
+    }
+
+    ${
+      c.mode !== "blank"
+        ? `
+      <div class="field">
+        <label>Extra fee (cleaning, service…) — optional</label>
+        <input id="custom-cleaning" type="number" inputmode="decimal" step="0.01" min="0" value="${escapeAttr(c.cleaningFee)}" />
+      </div>
+      ${cleaning > 0 ? `<p class="tiny">Fee splits proportionally after people claim.</p>` : ""}
+    `
+        : `<p class="banner">You'll add line items on the next screen.</p>`
+    }
+
+    <div class="stack">
+      <button class="btn btn-primary" id="btn-custom-continue"><span class="tt-check">✓</span> Continue to review</button>
     </div>
   `;
 }
@@ -393,26 +507,33 @@ function renderReview() {
   const d = state.draft;
   const subtotal = d.items.reduce((s, i) => s + i.totalCents, 0);
   const fees = d.fees.reduce((s, f) => s + f.amountCents, 0);
+  const isCustom = state.parseSource === "custom";
   return `
     <div class="top-nav">
       <button class="btn btn-ghost" id="btn-back-home">← Home</button>
     </div>
     <section class="hero" style="padding-top:4px">
-      <h2 class="brand" style="font-size:2rem">Let's review your items</h2>
-      <p class="lede">Make sure everything looks right before you share the claim link.</p>
+      <h2 class="brand" style="font-size:2rem">${isCustom ? "Review your split" : "Let's review your items"}</h2>
+      <p class="lede">${
+        isCustom
+          ? "Edit names, quantities, and prices. Guests will claim units from this list."
+          : "Make sure everything looks right before you share the claim link."
+      }</p>
       ${
         state.parseSource === "demo"
           ? `<p class="banner">Demo mode is on (no vision API key). Add <strong>ANTHROPIC_API_KEY</strong> or <strong>OPENAI_API_KEY</strong> for live receipt OCR.</p>`
           : state.parseSource === "vision"
             ? `<p class="banner">We read your receipt — please double-check the totals.</p>`
-            : ""
+            : isCustom
+              ? `<p class="banner">Tip: qty is how many spots can be claimed. Line total is for all units of that row (or set per-spot pricing carefully).</p>`
+              : ""
       }
     </section>
     <div class="field">
-      <label>Restaurant</label>
-      <input id="rest-name" value="${escapeAttr(d.restaurant)}" />
+      <label>${isCustom ? "Title" : "Restaurant"}</label>
+      <input id="rest-name" value="${escapeAttr(d.restaurant)}" placeholder="${isCustom ? "Airbnb · Downtown loft" : "Restaurant name"}" />
     </div>
-    <p class="section-label">Line items</p>
+    <p class="section-label">Line items <span class="tiny">(name · qty · line total $)</span></p>
     <div id="item-edits">
       ${d.items
         .map(
@@ -427,7 +548,7 @@ function renderReview() {
         .join("")}
     </div>
     <button class="btn btn-secondary" id="add-item">+ Add item</button>
-    <p class="section-label">Fees (tax / tip / admin)</p>
+    <p class="section-label">Fees (tax / tip / cleaning)</p>
     <div id="fee-edits">
       ${d.fees
         .map(
@@ -610,12 +731,95 @@ function escapeAttr(s) {
 function render() {
   const el = screen();
   if (state.view === "home") el.innerHTML = renderHome();
+  else if (state.view === "create") el.innerHTML = renderCreate();
   else if (state.view === "parsing") el.innerHTML = renderParsing();
   else if (state.view === "review") el.innerHTML = renderReview();
   else if (state.view === "share") el.innerHTML = renderShare();
   else if (state.view === "claim") el.innerHTML = renderClaim();
   else if (state.view === "totals") el.innerHTML = renderTotals();
   bind();
+}
+
+function syncCustomFromDom() {
+  const c = state.custom;
+  const title = document.getElementById("custom-title");
+  if (title) c.title = title.value;
+  const total = document.getElementById("custom-total");
+  if (total) c.totalDollars = total.value;
+  const people = document.getElementById("custom-people");
+  if (people) c.people = people.value;
+  const cleaning = document.getElementById("custom-cleaning");
+  if (cleaning) c.cleaningFee = cleaning.value;
+  document.querySelectorAll("#tier-edits .edit-row").forEach((row) => {
+    const idx = Number(row.dataset.tier);
+    const t = c.tiers[idx];
+    if (!t) return;
+    t.name = row.querySelector(".tname").value;
+    t.qty = Math.max(1, Math.round(Number(row.querySelector(".tqty").value) || 1));
+    t.amount = row.querySelector(".tamount").value;
+  });
+}
+
+function buildDraftFromCustom() {
+  const c = state.custom;
+  const title = (c.title || "Custom split").trim();
+  const fees = [];
+  const cleaning = Number(c.cleaningFee) || 0;
+  if (cleaning > 0) {
+    fees.push({
+      tempId: "fee-clean",
+      name: "Cleaning / service fee",
+      amountCents: Math.round(cleaning * 100),
+    });
+  }
+
+  if (c.mode === "equal") {
+    const totalCents = Math.round((Number(c.totalDollars) || 0) * 100);
+    const n = Math.max(1, Math.round(Number(c.people) || 1));
+    if (totalCents <= 0) {
+      toast("Enter a total amount");
+      return false;
+    }
+    // One claimable pool: N shares of equal value
+    state.draft = {
+      restaurant: title,
+      items: [
+        {
+          tempId: "share",
+          name: `Equal share (1 of ${n})`,
+          qty: n,
+          totalCents,
+        },
+      ],
+      fees,
+    };
+  } else if (c.mode === "tiers") {
+    const items = c.tiers
+      .filter((t) => t.name.trim() && Number(t.amount) > 0)
+      .map((t, i) => {
+        const qty = Math.max(1, Math.round(Number(t.qty) || 1));
+        const eachCents = Math.round(Number(t.amount) * 100);
+        return {
+          tempId: `tier${i}`,
+          name: t.name.trim(),
+          qty,
+          totalCents: eachCents * qty,
+        };
+      });
+    if (!items.length) {
+      toast("Add at least one rate with a price");
+      return false;
+    }
+    state.draft = { restaurant: title, items, fees };
+  } else {
+    state.draft = {
+      restaurant: title,
+      items: [{ tempId: "t0", name: "", qty: 1, totalCents: 0 }],
+      fees,
+    };
+  }
+  state.parseSource = "custom";
+  return true;
 }
 
 function syncDraftFromDom() {
@@ -641,17 +845,55 @@ function syncDraftFromDom() {
 
 function bind() {
   document.getElementById("btn-demo")?.addEventListener("click", startDemoReceipt);
-  document.getElementById("btn-manual")?.addEventListener("click", async () => {
-    const created = await api("/receipts", { method: "POST", body: "{}" });
-    state.receipt = created.receipt;
-    state.parseSource = null;
-    state.draft = {
-      restaurant: "",
-      items: [{ tempId: "t0", name: "", qty: 1, totalCents: 0 }],
-      fees: [{ tempId: "f0", name: "Tax", amountCents: 0 }],
-    };
-    state.view = "review";
+  document.getElementById("btn-custom")?.addEventListener("click", () => {
+    state.view = "create";
     render();
+  });
+  document.getElementById("btn-manual")?.addEventListener("click", () => {
+    state.custom.mode = "blank";
+    state.view = "create";
+    render();
+  });
+  document.querySelectorAll("[data-mode]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      syncCustomFromDom();
+      state.custom.mode = btn.dataset.mode;
+      render();
+    });
+  });
+  document.getElementById("add-tier")?.addEventListener("click", () => {
+    syncCustomFromDom();
+    state.custom.tiers.push({ name: "", qty: 1, amount: "" });
+    render();
+  });
+  document.querySelectorAll("[data-del-tier]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      syncCustomFromDom();
+      state.custom.tiers.splice(Number(btn.dataset.delTier), 1);
+      if (!state.custom.tiers.length) {
+        state.custom.tiers.push({ name: "Master bedroom", qty: 1, amount: "300" });
+      }
+      render();
+    });
+  });
+  document.getElementById("btn-custom-continue")?.addEventListener("click", async () => {
+    syncCustomFromDom();
+    if (!buildDraftFromCustom()) return;
+    try {
+      const created = await api("/receipts", { method: "POST", body: "{}" });
+      state.receipt = created.receipt;
+      state.view = "review";
+      render();
+    } catch (e) {
+      toast(e.message || "Could not create split");
+    }
+  });
+  // live preview updates for equal/tiers without full re-render on every key
+  ["custom-title", "custom-total", "custom-people", "custom-cleaning"].forEach((id) => {
+    document.getElementById(id)?.addEventListener("change", () => {
+      syncCustomFromDom();
+      if (state.view === "create") render();
+    });
   });
   document.getElementById("file-input")?.addEventListener("change", (e) => {
     const file = e.target.files?.[0];
