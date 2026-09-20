@@ -1,0 +1,60 @@
+{
+  "expo": {
+    "name": "Split the Wine",
+    "slug": "split-the-wine",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "scheme": "splitthewine",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "app.splitthewine",
+      "associatedDomains": ["applinks:splitthewine.app"]
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#140e0c",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "package": "app.splitthewine",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "splitthewine.app",
+              "pathPrefix": "/r"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Split the Wine to access photos of receipts.",
+          "cameraPermission": "Allow Split the Wine to photograph receipts."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "apiUrl": "http://localhost:8787/api"
+    }
+  }
+}
