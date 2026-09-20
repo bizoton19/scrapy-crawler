@@ -98,7 +98,7 @@ export default function CaptureReceipt() {
   if (busy) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" color={colors.gold} />
+        <ActivityIndicator size="large" color={colors.accent} />
         <Text style={styles.title}>Reading the tab…</Text>
         <Text style={styles.sub}>
           Vision runs on the server. You’ll review before sharing.
@@ -137,45 +137,45 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   title: {
-    fontFamily: "Fraunces_700Bold",
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 32,
     color: colors.ink,
   },
   sub: {
-    fontFamily: "DMSans_400Regular",
+    fontFamily: "NunitoSans_400Regular",
     color: colors.inkDim,
     fontSize: 16,
     lineHeight: 22,
     marginBottom: 12,
     textAlign: "center",
   },
-  error: { color: colors.danger, fontFamily: "DMSans_500Medium" },
+  error: { color: colors.danger, fontFamily: "NunitoSans_600SemiBold" },
   btnPrimary: {
     minHeight: 54,
-    borderRadius: 18,
-    backgroundColor: colors.wine,
+    borderRadius: 999,
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
   btnPrimaryText: {
-    color: "#fff7f2",
-    fontFamily: "DMSans_700Bold",
+    color: "#ffffff",
+    fontFamily: "NunitoSans_800ExtraBold",
     fontSize: 16,
   },
   btnSecondary: {
     minHeight: 54,
-    borderRadius: 18,
-    borderWidth: 1,
+    borderRadius: 999,
+    borderWidth: 2,
     borderColor: colors.line,
-    backgroundColor: "rgba(246,239,230,0.07)",
+    backgroundColor: "#ffffff",
     alignItems: "center",
     justifyContent: "center",
   },
   btnSecondaryText: {
     color: colors.ink,
-    fontFamily: "DMSans_700Bold",
+    fontFamily: "NunitoSans_800ExtraBold",
     fontSize: 16,
   },
   btnGhost: { minHeight: 48, alignItems: "center", justifyContent: "center" },
-  btnGhostText: { color: colors.inkDim, fontFamily: "DMSans_500Medium" },
+  btnGhostText: { color: colors.inkDim, fontFamily: "NunitoSans_600SemiBold" },
 });

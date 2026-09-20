@@ -349,13 +349,13 @@ function renderHome() {
   return `
     <section class="hero">
       <h1 class="brand">Split<br/>the Wine</h1>
-      <p class="lede">Photograph the check. Let everyone claim their pours. Settle up without the spreadsheet.</p>
+      <p class="lede">We'll walk you through the check — claim what you ordered, then see exactly what you owe.</p>
     </section>
     <div class="stack">
-      <button class="btn btn-primary" id="btn-demo">New receipt — demo bar tab</button>
-      <label class="btn btn-secondary" for="file-input">Take / choose photo</label>
+      <button class="btn btn-primary" id="btn-demo"><span class="tt-check">✓</span> Start with a demo receipt</button>
+      <label class="btn btn-secondary" for="file-input">Take or upload a photo</label>
       <input id="file-input" type="file" accept="image/*" capture="environment" hidden />
-      <button class="btn btn-ghost" id="btn-manual">Enter items manually</button>
+      <button class="btn btn-ghost" id="btn-manual">Enter items myself</button>
     </div>
     <p class="section-label">Recent</p>
     <div class="stack" style="margin-top:0">
@@ -383,8 +383,8 @@ function renderParsing() {
   return `
     <div class="hero" style="text-align:center;padding-top:80px">
       <div class="spinner"></div>
-      <h2 style="font-family:var(--font-display)">Reading the tab…</h2>
-      <p class="center-copy">Vision runs on the server. You always get a chance to fix anything before sharing.</p>
+      <h2 style="font-family:var(--font-display);font-weight:800;color:var(--ink)">Reading your receipt…</h2>
+      <p class="center-copy">Hang tight — then you'll review everything before anyone claims.</p>
     </div>
   `;
 }
@@ -398,13 +398,13 @@ function renderReview() {
       <button class="btn btn-ghost" id="btn-back-home">← Home</button>
     </div>
     <section class="hero" style="padding-top:4px">
-      <h2 class="brand" style="font-size:2rem">Review items</h2>
-      <p class="lede">Fix misreads before anyone claims. Tap fields to edit.</p>
+      <h2 class="brand" style="font-size:2rem">Let's review your items</h2>
+      <p class="lede">Make sure everything looks right before you share the claim link.</p>
       ${
         state.parseSource === "demo"
-          ? `<p class="banner">Demo parse loaded (no vision API key). Add <strong>ANTHROPIC_API_KEY</strong> or <strong>OPENAI_API_KEY</strong> for live receipt OCR.</p>`
+          ? `<p class="banner">Demo mode is on (no vision API key). Add <strong>ANTHROPIC_API_KEY</strong> or <strong>OPENAI_API_KEY</strong> for live receipt OCR.</p>`
           : state.parseSource === "vision"
-            ? `<p class="banner">Parsed with vision model — double-check totals.</p>`
+            ? `<p class="banner">We read your receipt — please double-check the totals.</p>`
             : ""
       }
     </section>
@@ -444,7 +444,7 @@ function renderReview() {
     <p class="section-label">Totals</p>
     <p class="item-meta">Items ${money(subtotal)} · Fees ${money(fees)} · <span class="money">${money(subtotal + fees)}</span></p>
     <div class="stack">
-      <button class="btn btn-primary" id="btn-publish">Create claim link</button>
+      <button class="btn btn-primary" id="btn-publish"><span class="tt-check">✓</span> Looks good — create claim link</button>
     </div>
   `;
 }
@@ -457,8 +457,8 @@ function renderShare() {
       <button class="btn btn-ghost" id="btn-back-home">← Home</button>
     </div>
     <section class="hero" style="padding-top:4px">
-      <h2 class="brand" style="font-size:2.2rem">Share the link</h2>
-      <p class="lede">Anyone with the URL can claim — no app install required.</p>
+      <h2 class="brand" style="font-size:2.2rem">You're ready to share</h2>
+      <p class="lede">Send this link to the table. Guests can claim without installing an app.</p>
     </section>
     <div class="link-box" id="claim-url">${r.claimUrl}</div>
     <div class="stack">
@@ -483,8 +483,8 @@ function renderClaim() {
       ${r.status === "open" ? `<button class="btn btn-ghost" id="btn-to-totals" style="margin-left:auto">Who owes</button>` : ""}
     </div>
     <section class="hero" style="padding-top:4px">
-      <h2 class="brand" style="font-size:2.1rem">${escapeHtml(r.restaurant || "Claim your pours")}</h2>
-      <p class="lede">Tap an item, set a whole number, claim. Updates live for everyone.</p>
+      <h2 class="brand" style="font-size:2.1rem">${escapeHtml(r.restaurant || "Claim your items")}</h2>
+      <p class="lede">Tap what you ordered, pick a whole number, and claim. Everyone sees updates live.</p>
       ${state.reconnecting ? `<p class="banner">Reconnecting… showing latest when available.</p>` : ""}
     </section>
     <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
@@ -546,8 +546,8 @@ function renderTotals() {
       <button class="btn btn-ghost" id="btn-back-claim">← Claims</button>
     </div>
     <section class="hero" style="padding-top:4px">
-      <h2 class="brand" style="font-size:2.1rem">Who owes what</h2>
-      <p class="lede">Fees split by each person's share of the claimed subtotal — never evenly by headcount.</p>
+      <h2 class="brand" style="font-size:2.1rem">Here's what everyone owes</h2>
+      <p class="lede">Fees are split by each person's share of the claimed subtotal — not evenly by headcount.</p>
       ${
         state.receipt.items.some((i) => i.remaining > 0)
           ? `<p class="banner">Based on claims so far. Unclaimed items aren't assigned yet, so early claimants temporarily carry all fees until others claim.</p>`

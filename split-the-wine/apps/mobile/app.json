@@ -5,16 +5,18 @@
     "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "scheme": "splitthewine",
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "app.splitthewine",
-      "associatedDomains": ["applinks:splitthewine.app"]
+      "associatedDomains": [
+        "applinks:splitthewine.app"
+      ]
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#140e0c",
+        "backgroundColor": "#e6f7ec",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -31,7 +33,10 @@
               "pathPrefix": "/r"
             }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
       ]
     },

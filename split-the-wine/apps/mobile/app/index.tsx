@@ -31,29 +31,29 @@ export default function HostHome() {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.brand}>Split{"\n"}the Wine</Text>
       <Text style={styles.lede}>
-        Photograph the check. Let everyone claim their pours. Settle up without
-        the spreadsheet.
+        We'll walk you through the check — claim what you ordered, then see
+        exactly what you owe.
       </Text>
 
       <Pressable
         style={({ pressed }) => [styles.btnPrimary, pressed && styles.pressed]}
         onPress={() => router.push("/capture?demo=1")}
       >
-        <Text style={styles.btnPrimaryText}>New receipt — demo bar tab</Text>
+        <Text style={styles.btnPrimaryText}>✓  Start with a demo receipt</Text>
       </Pressable>
 
       <Pressable
         style={({ pressed }) => [styles.btnSecondary, pressed && styles.pressed]}
         onPress={() => router.push("/capture")}
       >
-        <Text style={styles.btnSecondaryText}>Take / choose photo</Text>
+        <Text style={styles.btnSecondaryText}>Take or upload a photo</Text>
       </Pressable>
 
       <Pressable
         style={({ pressed }) => [styles.btnGhost, pressed && styles.pressed]}
         onPress={() => router.push("/review?manual=1")}
       >
-        <Text style={styles.btnGhostText}>Enter items manually</Text>
+        <Text style={styles.btnGhostText}>Enter items myself</Text>
       </Pressable>
 
       <Text style={styles.section}>Recent</Text>
@@ -92,14 +92,14 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   brand: {
-    fontFamily: "Fraunces_700Bold",
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 48,
     lineHeight: 46,
     color: colors.ink,
     marginBottom: 8,
   },
   lede: {
-    fontFamily: "DMSans_400Regular",
+    fontFamily: "NunitoSans_400Regular",
     fontSize: 17,
     lineHeight: 24,
     color: colors.inkDim,
@@ -108,29 +108,29 @@ const styles = StyleSheet.create({
   },
   btnPrimary: {
     minHeight: 54,
-    borderRadius: 18,
-    backgroundColor: colors.wine,
+    borderRadius: 999,
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 18,
   },
   btnPrimaryText: {
-    color: "#fff7f2",
-    fontFamily: "DMSans_700Bold",
+    color: "#ffffff",
+    fontFamily: "NunitoSans_800ExtraBold",
     fontSize: 16,
   },
   btnSecondary: {
     minHeight: 54,
-    borderRadius: 18,
-    backgroundColor: "rgba(246,239,230,0.07)",
-    borderWidth: 1,
-    borderColor: colors.line,
+    borderRadius: 999,
+    backgroundColor: "#ffffff",
+    borderWidth: 2,
+    borderColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
   btnSecondaryText: {
-    color: colors.ink,
-    fontFamily: "DMSans_700Bold",
+    color: colors.primaryDeep,
+    fontFamily: "NunitoSans_800ExtraBold",
     fontSize: 16,
   },
   btnGhost: {
@@ -140,21 +140,21 @@ const styles = StyleSheet.create({
   },
   btnGhostText: {
     color: colors.inkDim,
-    fontFamily: "DMSans_500Medium",
+    fontFamily: "NunitoSans_600SemiBold",
     fontSize: 15,
   },
   pressed: { opacity: 0.85, transform: [{ scale: 0.98 }] },
   section: {
     marginTop: 18,
     fontSize: 12,
-    letterSpacing: 1.5,
+    letterSpacing: 1.2,
     textTransform: "uppercase",
-    color: "rgba(246,239,230,0.38)",
-    fontFamily: "DMSans_700Bold",
+    color: colors.inkDim,
+    fontFamily: "NunitoSans_800ExtraBold",
   },
   muted: {
     color: colors.inkDim,
-    fontFamily: "DMSans_400Regular",
+    fontFamily: "NunitoSans_400Regular",
   },
   row: {
     flexDirection: "row",
@@ -162,13 +162,13 @@ const styles = StyleSheet.create({
     gap: 12,
     padding: 14,
     borderRadius: 18,
-    backgroundColor: "rgba(246,239,230,0.04)",
+    backgroundColor: "#ffffff",
     borderWidth: 1,
     borderColor: colors.line,
   },
   rowTitle: {
     color: colors.ink,
-    fontFamily: "DMSans_700Bold",
+    fontFamily: "NunitoSans_800ExtraBold",
     fontSize: 16,
     marginBottom: 4,
   },
@@ -176,13 +176,13 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 14,
-    backgroundColor: colors.goldSoft,
+    backgroundColor: colors.primarySoft,
     alignItems: "center",
     justifyContent: "center",
   },
   badgeText: {
-    color: colors.gold,
-    fontFamily: "DMSans_700Bold",
+    color: colors.primaryDeep,
+    fontFamily: "NunitoSans_800ExtraBold",
     fontSize: 16,
   },
 });
