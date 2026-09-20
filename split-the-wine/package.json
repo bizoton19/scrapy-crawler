@@ -1,0 +1,13 @@
+{
+  "name": "split-the-wine",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Split the Wine — receipt photo → claim link → fair split",
+  "scripts": {
+    "server": "npm run start --prefix server",
+    "server:dev": "npm run dev --prefix server",
+    "mobile": "npm run start --prefix apps/mobile",
+    "mobile:web": "npm run web --prefix apps/mobile",
+    "test": "npm run test --prefix server"
+  }
+}
