@@ -11,8 +11,8 @@ import { hasVisionKey } from "./vision/parse.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "../..");
-const uploadDir = path.resolve(root, "../uploads");
-const webFallbackDir = path.resolve(root, "../apps/web-fallback");
+const uploadDir = path.resolve(root, "uploads");
+const webFallbackDir = path.resolve(root, "apps/web-fallback");
 
 fs.mkdirSync(uploadDir, { recursive: true });
 
